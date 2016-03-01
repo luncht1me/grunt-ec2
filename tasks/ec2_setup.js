@@ -59,7 +59,11 @@ module.exports = function (grunt) {
             'sudo yum -y install openssl-devel',
             'sudo yum -y install gcc ruby-devel rubygems git',
             'curl --silent --location https://rpm.nodesource.com/setup_5.x | sudo -E bash -',
-            'sudo yum -y install nodejs'
+            'sudo yum -y install nodejs',
+            // Set SWAP for Node.
+            'sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024',
+            'sudo /sbin/mkswap /var/swap.1',
+            'sudo /sbin/swapon /var/swap.1'
         ], [ // pm2
             'sudo npm install -g pm2 --unsafe-perm',
             'sudo npm install -g strongloop',
