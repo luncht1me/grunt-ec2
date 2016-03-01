@@ -48,17 +48,18 @@ module.exports = function (grunt) {
             rsync: rsync
         }, [
             util.format('sudo rm -rf `ls -t %s | tail -n +11`', versions)
-        ], workflow.if_not('NPM_INSTALL_DISABLED', [
+        ],  workflow.if_not('NPM_INSTALL_DISABLED', [
             util.format('sudo npm --prefix %s install --production --loglevel %s', dest, verbosity)
         ]), workflow.if_has('NPM_REBUILD', [
             'sudo npm rebuild'
         ]), [
             util.format('sudo ln -sfn %s %s', dest, target),
+            ['sudo chown -R ec2-user:ec2-user /srv/apps/ec2'],
             commands.pm2_reload(),
             commands.pm2_start(name)
         ], workflow.if_has('NGINX_ENABLED', [
             'sudo nginx -s reload'
-        ]), 'sudo chown -R ec2-user:ec2-user /srv/apps/ec2/current'];
+        ])];
 
         workflow(steps, { name: name }, function () {
             sshCredentials(name, function (c) {
